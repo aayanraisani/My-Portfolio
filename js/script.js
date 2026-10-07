@@ -48,6 +48,12 @@ if (themeToggle) {
         const currentTheme = document.documentElement.getAttribute("data-theme");
         const newTheme = currentTheme === "dark" ? "light" : "dark";
 
+        // lets the colours fade instead of snapping
+        document.documentElement.classList.add("theme-changing");
+        setTimeout(() => {
+            document.documentElement.classList.remove("theme-changing");
+        }, 400);
+
         document.documentElement.setAttribute("data-theme", newTheme);
 
         try {
@@ -166,6 +172,43 @@ if (cvButton) {
             // if fetch is blocked, fall back to the normal link
             window.location.href = fileUrl;
         }
+    });
+}
+
+
+/* ========== SCROLL ANIMATION ========== */
+
+const revealItems = document.querySelectorAll(
+    ".section-heading, .info-list, .skill-card, .project-card, .experience-item, " +
+    ".strength-item, .contact-details, .contact-form, .cta-box"
+);
+
+const revealObserver = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+            entry.target.classList.add("visible");
+            revealObserver.unobserve(entry.target);
+        }
+    });
+}, { threshold: 0.1 });
+
+revealItems.forEach((item) => {
+    item.classList.add("reveal");
+    revealObserver.observe(item);
+});
+
+
+/* ========== BACK TO TOP ========== */
+
+const backToTop = document.getElementById("backToTop");
+
+if (backToTop) {
+    window.addEventListener("scroll", () => {
+        backToTop.classList.toggle("show", window.scrollY > 500);
+    });
+
+    backToTop.addEventListener("click", () => {
+        window.scrollTo({ top: 0, behavior: "smooth" });
     });
 }
 
