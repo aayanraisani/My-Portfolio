@@ -1093,3 +1093,130 @@ html[data-theme="dark"] .btn-primary-custom,
 html[data-theme="dark"] .btn-primary-custom:hover {
     color: #0f172a;
 }
+
+
+/* ========== ANIMATIONS ========== */
+
+@keyframes fadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(24px);
+    }
+}
+
+/* hero loads in one by one */
+.hero-label,
+.hero-section h1,
+.hero-text,
+.hero-buttons,
+.hero-links,
+.hero-visual {
+    animation: fadeUp 0.8s ease backwards;
+}
+
+.hero-section h1 {
+    animation-delay: 0.1s;
+}
+
+.hero-text {
+    animation-delay: 0.2s;
+}
+
+.hero-buttons {
+    animation-delay: 0.3s;
+}
+
+.hero-links {
+    animation-delay: 0.4s;
+}
+
+.hero-visual {
+    animation-delay: 0.3s;
+}
+
+/* other sections fade in when you scroll to them */
+.reveal {
+    opacity: 0;
+}
+
+.reveal.visible {
+    opacity: 1;
+    animation: fadeUp 0.7s ease backwards;
+}
+
+.row> :nth-child(3n+2)>.reveal.visible,
+.projects-grid>.reveal:nth-child(3n+2).visible {
+    animation-delay: 0.1s;
+}
+
+.row> :nth-child(3n+3)>.reveal.visible,
+.projects-grid>.reveal:nth-child(3n+3).visible {
+    animation-delay: 0.2s;
+}
+
+/* smooth colour change when switching theme */
+html.theme-changing,
+html.theme-changing * {
+    transition: background-color 0.4s ease, color 0.4s ease, border-color 0.4s ease !important;
+}
+
+.btn:active {
+    transform: translateY(0);
+}
+
+
+/* ========== BACK TO TOP ========== */
+
+.back-to-top {
+    position: fixed;
+    right: 22px;
+    bottom: 22px;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--primary);
+    color: #ffffff;
+    border: none;
+    border-radius: 50%;
+    box-shadow: var(--shadow-md);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(10px);
+    transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s ease, background 0.25s ease;
+}
+
+.back-to-top.show {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+}
+
+.back-to-top:hover {
+    background: var(--primary-dark);
+}
+
+html[data-theme="dark"] .back-to-top {
+    color: #0f172a;
+}
+
+
+/* ========== REDUCED MOTION ========== */
+
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+        animation: none !important;
+        transition: none !important;
+    }
+
+    .reveal {
+        opacity: 1;
+    }
+}
