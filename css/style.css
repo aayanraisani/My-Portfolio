@@ -250,7 +250,24 @@ button {
   transform: translateY(-2px);
 }
 
+/*
+  FIX: Bootstrap's .btn:focus-visible and .btn:active rules read the
+  --bs-btn-* variables. Our custom button classes never defined them, so the
+  button lost its colours while focused or pressed, and had no focus ring.
+  Defining the variables here keeps every state consistent.
+*/
+
 .btn-primary-custom {
+  --bs-btn-color: #ffffff;
+  --bs-btn-bg: var(--primary);
+  --bs-btn-border-color: var(--primary);
+  --bs-btn-hover-color: #ffffff;
+  --bs-btn-hover-bg: var(--primary-dark);
+  --bs-btn-hover-border-color: var(--primary-dark);
+  --bs-btn-active-color: #ffffff;
+  --bs-btn-active-bg: var(--primary-dark);
+  --bs-btn-active-border-color: var(--primary-dark);
+  --bs-btn-focus-shadow-rgb: 37, 99, 235;
   background: var(--primary);
   border: 1px solid var(--primary);
   color: #ffffff;
@@ -264,6 +281,16 @@ button {
 }
 
 .btn-outline-custom {
+  --bs-btn-color: var(--dark);
+  --bs-btn-bg: transparent;
+  --bs-btn-border-color: var(--border-strong);
+  --bs-btn-hover-color: var(--light);
+  --bs-btn-hover-bg: var(--dark);
+  --bs-btn-hover-border-color: var(--dark);
+  --bs-btn-active-color: var(--light);
+  --bs-btn-active-bg: var(--dark);
+  --bs-btn-active-border-color: var(--dark);
+  --bs-btn-focus-shadow-rgb: 37, 99, 235;
   background: transparent;
   border: 1px solid var(--border-strong);
   color: var(--dark);
@@ -275,6 +302,16 @@ button {
 }
 
 .btn-light-custom {
+  --bs-btn-color: #111827;
+  --bs-btn-bg: #ffffff;
+  --bs-btn-border-color: #ffffff;
+  --bs-btn-hover-color: #ffffff;
+  --bs-btn-hover-bg: transparent;
+  --bs-btn-hover-border-color: #ffffff;
+  --bs-btn-active-color: #ffffff;
+  --bs-btn-active-bg: transparent;
+  --bs-btn-active-border-color: #ffffff;
+  --bs-btn-focus-shadow-rgb: 255, 255, 255;
   background: #ffffff;
   border: 1px solid #ffffff;
   color: #111827;
@@ -506,16 +543,18 @@ button {
 
 /* ========== PROJECTS ========== */
 
+/*
+  FIX: switched from flex-wrap to CSS grid. With flex + max-width, a lone card
+  on the last row grew wider than the cards above it. Grid keeps every card the
+  same width, however many projects there are.
+*/
 .projects-grid {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
   gap: 24px;
 }
 
 .project-card {
-  flex: 1 1 320px;
-  max-width: 390px;
   min-height: 390px;
   padding: 30px;
   background: var(--section-bg);
@@ -601,9 +640,38 @@ button {
   gap: 7px;
 }
 
+/* "New project coming soon" placeholder card */
+.project-card-soon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  background: transparent;
+  border: 2px dashed var(--border-strong);
+  box-shadow: none;
+}
+
+.project-card-soon .project-icon {
+  margin: 0 auto 22px;
+}
+
+.project-card-soon .project-content h3 {
+  margin-bottom: 0;
+}
+
+.project-card-soon:hover {
+  transform: none;
+  box-shadow: none;
+  border-color: var(--primary);
+}
+
 @media (max-width: 767.98px) {
   .project-card {
     min-height: auto;
+  }
+
+  .project-card-soon {
+    min-height: 220px;
   }
 }
 
@@ -1023,6 +1091,12 @@ textarea:focus-visible {
 }
 
 /* ========== DARK MODE BUTTON ========== */
+
+html[data-theme="dark"] .btn-primary-custom {
+  --bs-btn-color: #0f172a;
+  --bs-btn-hover-color: #0f172a;
+  --bs-btn-active-color: #0f172a;
+}
 
 html[data-theme="dark"] .btn-primary-custom,
 html[data-theme="dark"] .btn-primary-custom:hover {
