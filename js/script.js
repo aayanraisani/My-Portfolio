@@ -1,245 +1,139 @@
-/* ========== ELEMENTS ========== */
-
+const root = document.documentElement;
 const navbar = document.getElementById("mainNavbar");
-const themeToggle = document.getElementById("themeToggle");
-const themeIcon = document.getElementById("themeIcon");
+const navCollapse = document.getElementById("navbarNav");
 const navLinks = document.querySelectorAll(".nav-link");
 const sections = document.querySelectorAll("section[id]");
-const currentYear = document.getElementById("currentYear");
-const contactForm = document.getElementById("contactForm");
+const themeToggle = document.getElementById("themeToggle");
+const themeIcon = document.getElementById("themeIcon");
+const backToTop = document.getElementById("backToTop");
 const heroPhoto = document.getElementById("heroPhoto");
-const photoFallback = document.getElementById("photoFallback");
-
-
-/* ========== NAVBAR SCROLL EFFECT ========== */
-
-function updateNavbar() {
-    if (!navbar) return;
-
-    if (window.scrollY > 50) {
-        navbar.classList.add("scrolled");
-    } else {
-        navbar.classList.remove("scrolled");
-    }
-}
-
-window.addEventListener("scroll", updateNavbar, { passive: true });
-updateNavbar();
-
-
-/* ========== THEME TOGGLE ========== */
-
-function updateThemeToggle() {
-    if (!themeToggle || !themeIcon) return;
-
-    const isDark = document.documentElement.getAttribute("data-theme") === "dark";
-    const label = isDark ? "Switch to light mode" : "Switch to dark mode";
-
-    themeIcon.className = isDark ? "bi bi-sun-fill" : "bi bi-moon-fill";
-    themeToggle.setAttribute("aria-label", label);
-    themeToggle.setAttribute("title", label);
-    themeToggle.setAttribute("aria-pressed", String(isDark));
-}
-
-if (themeToggle) {
-    updateThemeToggle();
-
-    themeToggle.addEventListener("click", () => {
-        const currentTheme = document.documentElement.getAttribute("data-theme");
-        const newTheme = currentTheme === "dark" ? "light" : "dark";
-
-        // lets the colours fade instead of snapping
-        document.documentElement.classList.add("theme-changing");
-        setTimeout(() => {
-            document.documentElement.classList.remove("theme-changing");
-        }, 400);
-
-        document.documentElement.setAttribute("data-theme", newTheme);
-
-        try {
-            localStorage.setItem("aayan-portfolio-theme", newTheme);
-        } catch (error) {
-            // Ignore localStorage errors.
-        }
-
-        updateThemeToggle();
-    });
-}
-
-
-/* ========== ACTIVE NAVIGATION ========== */
-
-function updateActiveNav() {
-    let currentSection = "";
-
-    sections.forEach((section) => {
-        const sectionTop = section.offsetTop - 160;
-        const sectionHeight = section.offsetHeight;
-
-        if (window.scrollY >= sectionTop && window.scrollY < sectionTop + sectionHeight) {
-            currentSection = section.getAttribute("id");
-        }
-    });
-
-    if (!currentSection && window.scrollY < 300) {
-        currentSection = "home";
-    }
-
-    navLinks.forEach((link) => {
-        link.classList.remove("active");
-
-        if (link.getAttribute("href") === `#${currentSection}`) {
-            link.classList.add("active");
-        }
-    });
-}
-
-window.addEventListener("scroll", updateActiveNav, { passive: true });
-updateActiveNav();
-
-
-/* ========== MOBILE NAVBAR AUTO CLOSE ========== */
-
-navLinks.forEach((link) => {
-    link.addEventListener("click", () => {
-        const navbarCollapse = document.getElementById("navbarNav");
-
-        if (!navbarCollapse) return;
-
-        if (navbarCollapse.classList.contains("show") && typeof bootstrap !== "undefined") {
-            const bsCollapse = bootstrap.Collapse.getInstance(navbarCollapse);
-
-            if (bsCollapse) {
-                bsCollapse.hide();
-            }
-        }
-    });
-});
-
-
-/* ========== CURRENT YEAR ========== */
-
-if (currentYear) {
-    currentYear.textContent = new Date().getFullYear();
-}
-
-
-/* ========== HERO IMAGE FALLBACK ========== */
-
-if (heroPhoto) {
-    const showPhotoFallback = () => {
-        heroPhoto.style.display = "none";
-
-        if (photoFallback) {
-            photoFallback.style.display = "flex";
-        }
-    };
-
-    heroPhoto.addEventListener("error", showPhotoFallback);
-
-    if (heroPhoto.complete && heroPhoto.naturalWidth === 0) {
-        showPhotoFallback();
-    }
-}
-
-
-/* ========== DOWNLOAD CV ========== */
-
 const cvButton = document.getElementById("downloadCv");
 
-if (cvButton) {
-    cvButton.addEventListener("click", async (event) => {
-        event.preventDefault();
+const THEME_KEY = "aayan-portfolio-theme";
+const REVEAL_SELECTOR = [
+    ".section-heading", ".info-list", ".skill-card", ".project-card", ".experience-item",
+    ".strength-item", ".contact-details", ".contact-form", ".cta-box"
+].join(", ");
 
-        const fileUrl = cvButton.getAttribute("href");
 
-        try {
-            const response = await fetch(fileUrl);
-            if (!response.ok) {
-                throw new Error("CV file not found");
-            }
+function onScroll() {
+    navbar.classList.toggle("scrolled", window.scrollY > 50);
+    backToTop.classList.toggle("show", window.scrollY > 500);
 
-            const blob = await response.blob();
-            const blobUrl = URL.createObjectURL(blob);
-
-            const link = document.createElement("a");
-            link.href = blobUrl;
-            link.download = "Aayan-Ahmed-Brohi-CV.pdf";
-            link.click();
-
-            setTimeout(() => URL.revokeObjectURL(blobUrl), 1000);
-        } catch (error) {
-            // if fetch is blocked, fall back to the normal link
-            window.location.href = fileUrl;
-        }
+    let current = "home";
+    sections.forEach((section) => {
+        if (window.scrollY >= section.offsetTop - 160) current = section.id;
     });
+
+    navLinks.forEach((link) => link.classList.toggle("active", link.hash === `#${current}`));
 }
 
+window.addEventListener("scroll", onScroll, { passive: true });
+onScroll();
 
-/* ========== SCROLL ANIMATION ========== */
+backToTop.addEventListener("click", () => window.scrollTo({ top: 0, behavior: "smooth" }));
 
-const revealItems = document.querySelectorAll(
-    ".section-heading, .info-list, .skill-card, .project-card, .experience-item, " +
-    ".strength-item, .contact-details, .contact-form, .cta-box"
-);
-
-const revealObserver = new IntersectionObserver((entries) => {
-    entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-            entry.target.classList.add("visible");
-            revealObserver.unobserve(entry.target);
-        }
-    });
-}, { threshold: 0.1 });
-
-revealItems.forEach((item) => {
-    item.classList.add("reveal");
-    revealObserver.observe(item);
+navLinks.forEach((link) => {
+    link.addEventListener("click", () => bootstrap.Collapse.getInstance(navCollapse)?.hide());
 });
 
 
-/* ========== BACK TO TOP ========== */
+function syncThemeToggle() {
+    const isDark = root.dataset.theme === "dark";
+    const label = `Switch to ${isDark ? "light" : "dark"} mode`;
 
-const backToTop = document.getElementById("backToTop");
+    themeIcon.className = `bi ${isDark ? "bi-sun-fill" : "bi-moon-fill"}`;
+    themeToggle.setAttribute("aria-label", label);
+    themeToggle.title = label;
+    themeToggle.setAttribute("aria-pressed", isDark);
+}
 
-if (backToTop) {
-    window.addEventListener("scroll", () => {
-        backToTop.classList.toggle("show", window.scrollY > 500);
-    });
+themeToggle.addEventListener("click", () => {
+    const next = root.dataset.theme === "dark" ? "light" : "dark";
 
-    backToTop.addEventListener("click", () => {
-        window.scrollTo({ top: 0, behavior: "smooth" });
+    root.classList.add("theme-changing");
+    root.dataset.theme = next;
+    setTimeout(() => root.classList.remove("theme-changing"), 400);
+
+    try {
+        localStorage.setItem(THEME_KEY, next);
+    } catch {
+        // storage can be blocked (private mode); the theme still applies for this visit
+    }
+
+    syncThemeToggle();
+});
+
+syncThemeToggle();
+
+
+function showPhotoFallback() {
+    heroPhoto.style.display = "none";
+    document.getElementById("photoFallback").style.display = "flex";
+}
+
+heroPhoto.addEventListener("error", showPhotoFallback);
+if (heroPhoto.complete && !heroPhoto.naturalWidth) showPhotoFallback();
+
+
+function saveFile(url) {
+    const link = Object.assign(document.createElement("a"), { href: url, download: cvButton.download });
+
+    document.body.append(link);
+    link.click();
+    link.remove();
+}
+
+cvButton.addEventListener("click", async (event) => {
+    event.preventDefault();
+
+    const response = await fetch(cvButton.href).catch(() => null);
+
+    if (response?.ok === false) {
+        alert("The CV is not available right now. Please email me and I will send it over.");
+        return;
+    }
+
+    // a blob forces a download even where the browser would open the PDF instead
+    const url = response ? URL.createObjectURL(await response.blob()) : cvButton.href;
+
+    saveFile(url);
+    if (response) setTimeout(() => URL.revokeObjectURL(url), 1000);
+});
+
+
+if ("IntersectionObserver" in window) {
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(({ isIntersecting, target }) => {
+            if (!isIntersecting) return;
+
+            target.classList.add("visible");
+            observer.unobserve(target);
+        });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll(REVEAL_SELECTOR).forEach((item) => {
+        item.classList.add("reveal");
+        observer.observe(item);
     });
 }
 
 
-/* ========== CONTACT FORM ========== */
+document.getElementById("currentYear").textContent = new Date().getFullYear();
 
-if (contactForm) {
-    contactForm.addEventListener("submit", (event) => {
-        event.preventDefault();
+document.getElementById("contactForm").addEventListener("submit", (event) => {
+    event.preventDefault();
 
-        const nameInput = document.getElementById("name");
-        const emailInput = document.getElementById("email");
-        const subjectInput = document.getElementById("subject");
-        const messageInput = document.getElementById("message");
+    const { name, email, subject, message } = Object.fromEntries(
+        [...new FormData(event.target)].map(([field, value]) => [field, value.trim()])
+    );
 
-        if (!nameInput || !emailInput || !subjectInput || !messageInput) return;
+    if (!name || !email || !subject || !message) {
+        alert("Please fill in all fields.");
+        return;
+    }
 
-        const name = nameInput.value.trim();
-        const email = emailInput.value.trim();
-        const subject = subjectInput.value.trim();
-        const message = messageInput.value.trim();
+    const body = encodeURIComponent(`Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`);
 
-        if (!name || !email || !subject || !message) {
-            alert("Please fill in all fields.");
-            return;
-        }
-
-        const receiverEmail = "aayanahmedbrohi2@gmail.com";
-        const mailSubject = encodeURIComponent(subject);
-        const mailBody = encodeURIComponent(`Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`);
-
-        window.location.href = `mailto:${receiverEmail}?subject=${mailSubject}&body=${mailBody}`;
-    });
-}
+    window.location.href = `mailto:aayanahmedbrohi2@gmail.com?subject=${encodeURIComponent(subject)}&body=${body}`;
+});
