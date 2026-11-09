@@ -7,7 +7,6 @@ const themeToggle = document.getElementById("themeToggle");
 const themeIcon = document.getElementById("themeIcon");
 const backToTop = document.getElementById("backToTop");
 const heroPhoto = document.getElementById("heroPhoto");
-const cvButton = document.getElementById("downloadCv");
 
 const THEME_KEY = "aayan-portfolio-theme";
 const REVEAL_SELECTOR = [
@@ -45,7 +44,6 @@ function syncThemeToggle() {
     themeIcon.className = `bi ${isDark ? "bi-sun-fill" : "bi-moon-fill"}`;
     themeToggle.setAttribute("aria-label", label);
     themeToggle.title = label;
-    themeToggle.setAttribute("aria-pressed", isDark);
 }
 
 themeToggle.addEventListener("click", () => {
@@ -74,32 +72,6 @@ function showPhotoFallback() {
 
 heroPhoto.addEventListener("error", showPhotoFallback);
 if (heroPhoto.complete && !heroPhoto.naturalWidth) showPhotoFallback();
-
-
-function saveFile(url) {
-    const link = Object.assign(document.createElement("a"), { href: url, download: cvButton.download });
-
-    document.body.append(link);
-    link.click();
-    link.remove();
-}
-
-cvButton.addEventListener("click", async (event) => {
-    event.preventDefault();
-
-    const response = await fetch(cvButton.href).catch(() => null);
-
-    if (response?.ok === false) {
-        alert("The CV is not available right now. Please email me and I will send it over.");
-        return;
-    }
-
-    // a blob forces a download even where the browser would open the PDF instead
-    const url = response ? URL.createObjectURL(await response.blob()) : cvButton.href;
-
-    saveFile(url);
-    if (response) setTimeout(() => URL.revokeObjectURL(url), 1000);
-});
 
 
 if ("IntersectionObserver" in window) {

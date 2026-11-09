@@ -5,7 +5,7 @@
   --light: #ffffff;
   --section-bg: #f1f5f9;
   --text: #374151;
-  --text-muted: #6b7280;
+  --text-muted: #5b6472;
   --border: #e5e7eb;
   --border-strong: #d1d5db;
   --card-bg: #ffffff;
@@ -15,9 +15,11 @@
   --shadow-md: 0 12px 30px rgba(15, 23, 42, 0.08);
   --radius: 8px;
   --transition: 0.25s ease;
+  color-scheme: light;
 }
 
 html[data-theme="dark"] {
+  color-scheme: dark;
   --primary: #60a5fa;
   --primary-dark: #3b82f6;
   --dark: #f8fafc;
@@ -73,6 +75,10 @@ textarea {
 
 button {
   cursor: pointer;
+}
+
+main:focus {
+  outline: none;
 }
 
 ::selection {
@@ -498,6 +504,8 @@ button {
 }
 
 .project-card {
+  display: flex;
+  flex-direction: column;
   min-height: 390px;
   padding: 30px;
   background: var(--section-bg);
@@ -527,6 +535,9 @@ button {
 }
 
 .project-content {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
   min-width: 0;
 }
 
@@ -544,7 +555,7 @@ button {
   margin-bottom: 12px;
   font-size: 1.5rem;
   font-weight: 700;
-  color: var(--text);
+  color: var(--dark);
 }
 
 .project-content p {
@@ -574,6 +585,7 @@ button {
   display: flex;
   flex-wrap: wrap;
   gap: 9px;
+  margin-top: auto;
 }
 
 @media (min-width: 768px) {
@@ -703,7 +715,7 @@ button {
 }
 
 .cta-box .section-label {
-  color: rgba(255, 255, 255, 0.75);
+  color: rgba(255, 255, 255, 0.92);
 }
 
 .cta-box h2 {
@@ -718,7 +730,7 @@ button {
 
 .cta-box p:not(.section-label) {
   max-width: 680px;
-  color: rgba(255, 255, 255, 0.8);
+  color: rgba(255, 255, 255, 0.92);
   margin: 0;
 }
 

@@ -23,6 +23,8 @@ Live site: https://aayanbrohi.vercel.app
 
 - Calculator: https://calculator-by-aayan.vercel.app/
 - Weather Web App: https://whether-app-by-aayanbrohi.vercel.app/
+- Lunévia Store: https://lunevia-shop.vercel.app/
+- Own Plate: https://own-plate.vercel.app/
 
 ## Contact
 
